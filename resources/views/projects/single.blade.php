@@ -9,7 +9,7 @@
     let project = {!! json_encode($project) !!}
     let current_cycle = {!! json_encode($project->current_cycle) !!}
 </script>
-<script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script>
+<script src="//{{ env("APP_SOCKETIO", Request::getHost().":6001") }}/socket.io/socket.io.js"></script>
 <script src="{{ mix('/js/projects/single.min.js') }}"></script>
 @endslot
 

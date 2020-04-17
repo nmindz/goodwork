@@ -1,5 +1,11 @@
 {
-    "authHost": "https://nginx",
+    "apiOriginAllow": {
+        "allowCors": true,
+        "allowOrigin": "*",
+        "allowMethods": "GET, POST, OPTIONS",
+        "allowHeaders": "Origin, Content-Type, X-Auth-Token, X-Requested-With, Accept, Authorization, X-CSRF-TOKEN, X-Socket-Id"
+    },
+    "authHost": "http://127.0.0.1",
     "authEndpoint": "/broadcasting/auth",
     "clients": [{
         "appId": "29ba136605479ed1",
@@ -9,7 +15,7 @@
     "databaseConfig": {
         "redis": {
             "port": "6379",
-            "host": "redis"
+            "host": "127.0.0.1"
         },
         "sqlite": {
             "databasePath": "/database/laravel-echo-server.sqlite"
@@ -18,7 +24,7 @@
     "devMode": false,
     "host": "",
     "port": "6001",
-    "protocol": "https",
+    "protocol": "http",
     "socketio": {},
     "sslCertPath": "/etc/ssl/certs/goodwork.local.crt",
     "sslKeyPath": "/etc/ssl/certs/goodwork.local.key"

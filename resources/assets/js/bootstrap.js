@@ -14,70 +14,75 @@ window.axios = require('axios')
 window.luxon = require('luxon')
 
 window.axios.defaults.headers.common = {
-  'X-CSRF-TOKEN': window.Laravel.csrfToken,
-  'X-Requested-With': 'XMLHttpRequest'
+    'X-CSRF-TOKEN': window.Laravel.csrfToken,
+    'X-Requested-With': 'XMLHttpRequest'
 }
 
 if (typeof io !== 'undefined') {
-  window.Echo = new Echo({
-    broadcaster: 'socket.io',
-    host: window.location.hostname + ':6001',
-    namespace: 'App.Base.Events'
-  })
+    if (process.env.APP_SOCKETIO) {
+        let _host = process.env.APP_PROTOCOL + "://" + process.env.APP_SOCKETIO
+    } else {
+        let _host = window.location.hostname + ':6001'
+    }
+    window.Echo = new Echo({
+        broadcaster: 'socket.io',
+        host: _host,
+        namespace: 'App.Base.Events'
+    })
 }
 
 window.Vue.mixin({
-  methods: {
-    generateUrl: function (value) {
-      if (!value) return 'http://' + window.location.host + '/image/avatar.jpg'
-      value = value.toString()
-      return window.location.protocol + '//' + window.location.host + '/' + value
-    },
-    updateUrl: function (params) {
-      const url = new URL(window.location.href)
-      for (const key in params) {
-        if (url.searchParams.has(key)) {
-          url.searchParams.delete(key)
+    methods: {
+        generateUrl: function(value) {
+            if (!value) return 'http://' + window.location.host + '/image/avatar.jpg'
+            value = value.toString()
+            return window.location.protocol + '//' + window.location.host + '/' + value
+        },
+        updateUrl: function(params) {
+            const url = new URL(window.location.href)
+            for (const key in params) {
+                if (url.searchParams.has(key)) {
+                    url.searchParams.delete(key)
+                }
+                if (params[key] !== null) {
+                    url.searchParams.append(key, params[key])
+                }
+            }
+            window.history.pushState({ path: url.href }, '', url.href)
         }
-        if (params[key] !== null) {
-          url.searchParams.append(key, params[key])
-        }
-      }
-      window.history.pushState({ path: url.href }, '', url.href)
     }
-  }
 })
 
-window.Vue.filter('localize', function (value) {
-  if (!value) return ''
-  value = value.toString()
-  return window.lang[value] ? window.lang[value] : value
+window.Vue.filter('localize', function(value) {
+    if (!value) return ''
+    value = value.toString()
+    return window.lang[value] ? window.lang[value] : value
 })
 
-window.Vue.filter('capitalize', function (value) {
-  if (!value) return ''
-  value = value.toString()
-  return value.charAt(0).toUpperCase() + value.slice(1)
+window.Vue.filter('capitalize', function(value) {
+    if (!value) return ''
+    value = value.toString()
+    return value.charAt(0).toUpperCase() + value.slice(1)
 })
 
-window.Vue.filter('clip', function (value) {
-  if (!value) return ''
-  value = value.toString()
-  return value.substr(0, 20) + '...'
+window.Vue.filter('clip', function(value) {
+    if (!value) return ''
+    value = value.toString()
+    return value.substr(0, 20) + '...'
 })
 
 window.Vue.directive('linkify', {
-  inserted: function (el) {
-    linkifyElement(el, {
-      className: 'text-blue-500',
-      formatHref: function (href, type) {
-        if (type === 'mention') {
-          return window.location.origin + '/users' + href
-        }
-        return href
-      }
-    })
-  }
+    inserted: function(el) {
+        linkifyElement(el, {
+            className: 'text-blue-500',
+            formatHref: function(href, type) {
+                if (type === 'mention') {
+                    return window.location.origin + '/users' + href
+                }
+                return href
+            }
+        })
+    }
 })
 
 window.Vue.directive('click-outside', ClickOutside)
